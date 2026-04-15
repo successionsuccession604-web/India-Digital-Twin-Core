@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="https://cesium.com"></script>
+  <link href="https://cesium.com" rel="stylesheet">
+</head>
+<body>
+  <div id="cesiumContainer" style="width: 100%; height: 100vh;"></div>
+  <script>
+    // Bhuvan Base Map Setup
+    const viewer = new Cesium.Viewer('cesiumContainer');
+    const bhuvanLayer = viewer.imageryLayers.addImageryProvider(new Cesium.WebMapServiceImageryProvider({
+        url : 'https://nrsc.gov.in',
+        layers : 'india3arc', // Bhuvan layer name
+        parameters : { transparent : 'true', format : 'image/png' }
+    }));
+  </script>
+</body>
+</html>
