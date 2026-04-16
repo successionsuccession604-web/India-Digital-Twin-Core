@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>India Digital Twin - Bhuvan 3D</title>
+  <!-- CesiumJS CSS aur JS links -->
+  <script src="https://cesium.com"></script>
+  <link href="https://cesium.com" rel="stylesheet">
+  <style>
+    html, body, #cesiumContainer {
+      width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
+    }
+    /* Plug and Play Control Panel UI */
+    #ui-panel {
+      position: absolute; top: 10px; left: 10px; background: rgba(32, 32, 32, 0.8);
+      color: white; padding: 15px; border-radius: 8px; font-family: sans-serif; z-index: 100;
+    }
+  </style>
+</head>
+<body>
+  <div id="ui-panel">
+    <h3>Digital Twin: India</h3>
+    <p>Status: <span style="color: #00ff00;">Live Bhuvan Feed</span></p>
+    <hr>
+    <label>Timeline Control:</label><br>
+    <button onclick="setView('past')">Past (2005)</button>
+    <button onclick="setView('present')">Present (Live)</button>
+    <button onclick="setView('future')">Future (Simulation)</button>
+  </div>
+
+  <div id="cesiumContainer"></div>
+
+  <script>
+    // 1. Initialize 3D Globe with Terrain (2D to 3D)
+    const viewer = new Cesium.Viewer('cesiumContainer', {
+      terrainProvider: Cesium.createWorldTerrain(),
+      baseLayerPicker: false,
+      geocoder: true
+    });
+
+    // 2. Add Bhuvan Live Imagery
+    const bhuvanImagery = new Cesium.WebMapServiceImageryProvider({
+      url: 'https://nrsc.gov.in',
+      layers: 'india3arc', 
+      parameters: { transparent: 'true', format: 'image/png' }
+    });
+    viewer.imageryLayers.addImageryProvider(bhuvanImagery);
+
+    // 3. Zoom to India Default View
+    viewer.camera.flyTo({
+      destination: Cesium.Cartesian3.fromDegrees(78.9629, 20.5937, 5000000.0)
+    });
+
+    // Logic for Past, Present, Future (Plug and Play Placeholder)
+    function setView(mode) {
+      alert("Switching to " + mode.toUpperCase() + " Mode. Integrated Bhuvan Layer Updating...");
+      // Yahan hum sensors aur historical layers ki APIs connect karenge
+    }
+  </script>
+</body>
+</html>
