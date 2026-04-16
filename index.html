@@ -1,60 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script src="https://cesium.com"></script>
-  <link href="https://cesium.com" rel="stylesheet">
-  <style>
-    #cesiumContainer { width: 100%; height: 100vh; margin: 0; background: #000; }
-    #ui { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.8); color: white; padding: 15px; z-index: 10; border-radius: 8px; font-family: Arial; border: 1px solid #444; }
-    button { cursor: pointer; margin: 5px 0; width: 100%; padding: 8px; background: #333; color: white; border: 1px solid #666; }
-    button:hover { background: #555; }
-  </style>
+    <meta charset="utf-8">
+    <title>India Digital Twin - Stable Build</title>
+    <script src="https://cesium.com"></script>
+    <link href="https://cesium.com" rel="stylesheet">
+    <style>
+        #cesiumContainer { width: 100%; height: 100vh; margin: 0; background: #000; }
+        #panel { position: absolute; top: 10px; left: 10px; background: rgba(20,20,20,0.9); color: white; padding: 20px; z-index: 10; border-radius: 10px; width: 250px; border: 1px solid #00ff00; }
+        button { width: 100%; margin-top: 10px; padding: 10px; cursor: pointer; background: #333; color: white; border: 1px solid #555; border-radius: 5px; }
+        button:hover { background: #00ff00; color: black; }
+    </style>
 </head>
 <body>
-  <div id="ui">
-    <h3 style="margin:0 0 10px 0;">India Digital Twin</h3>
-    <p style="font-size: 12px; color: #aaa;">Status: <span id="status">Connecting Bhuvan...</span></p>
-    <button onclick="zoomToIndia()">📍 Focus India (3D)</button>
-    <hr>
-    <button onclick="setLayer('past')">🕒 Past (2005)</button>
-    <button onclick="setLayer('present')">📡 Present (Live)</button>
-    <button onclick="setLayer('future')">🚀 Future (Sim)</button>
-  </div>
-  <div id="cesiumContainer"></div>
+    <div id="panel">
+        <h2 style="color: #00ff00; margin:0;">India Digital Twin</h2>
+        <p style="font-size: 12px;">System: <span id="status">Initializing...</span></p>
+        <hr>
+        <button onclick="zoomIndia()">📍 Reset View (India)</button>
+        <button onclick="toggleBhuvan()">📡 Toggle Bhuvan Layer</button>
+        <hr>
+        <div style="font-size: 11px; color: #aaa;">Past | Present | Future Mode Active</div>
+    </div>
+    <div id="cesiumContainer"></div>
 
-  <script>
-    // 1. Initialize 3D Globe with Default Terrain
-    const viewer = new Cesium.Viewer('cesiumContainer', {
-        terrainProvider: Cesium.createWorldTerrain(),
-        baseLayerPicker: false,
-        timeline: false,
-        animation: false
-    });
-
-    // 2. Bhuvan Live Layer Setup
-    const bhuvanProvider = new Cesium.WebMapServiceImageryProvider({
-        url : 'https://nrsc.gov.in',
-        layers : 'india3arc',
-        parameters : { transparent : 'true', format : 'image/png', styles: 'default' }
-    });
-    
-    const layer = viewer.imageryLayers.addImageryProvider(bhuvanProvider);
-
-    // 3. Function to Zoom and Force Load
-    function zoomToIndia() {
-        document.getElementById('status').innerText = "Loading Live Data...";
-        viewer.camera.flyTo({
-            destination : Cesium.Cartesian3.fromDegrees(78.9629, 20.5937, 4000000.0), // Zoom to India height
-            orientation : { pitch : Cesium.Math.toRadians(-35.0) } // 3D View Angle
+    <script>
+        // 1. Setup Viewer with Backup Map (OpenStreetMap) taaki screen khali na rahe
+        const viewer = new Cesium.Viewer('cesiumContainer', {
+            terrainProvider: Cesium.createWorldTerrain(),
+            baseLayerPicker: true, // Aap khud map badal sakte hain
+            animation: false,
+            timeline: false
         });
-    }
 
-    function setLayer(mode) {
-        alert("Plug-and-Play: " + mode.toUpperCase() + " layer integration logic active.");
-    }
+        // 2. Bhuvan Layer (Manual Toggle)
+        let bhuvanLayer;
+        function toggleBhuvan() {
+            if (bhuvanLayer) {
+                viewer.imageryLayers.remove(bhuvanLayer);
+                bhuvanLayer = null;
+                document.getElementById('status').innerText = "Using Backup Map";
+            } else {
+                bhuvanLayer = viewer.imageryLayers.addImageryProvider(new Cesium.WebMapServiceImageryProvider({
+                    url : 'https://nrsc.gov.in',
+                    layers : 'india3arc',
+                    parameters : { transparent : 'true', format : 'image/png' }
+                }));
+                document.getElementById('status').innerText = "Connecting Bhuvan...";
+            }
+        }
 
-    // Auto-zoom on start
-    setTimeout(zoomToIndia, 2000);
-  </script>
+        // 3. Proper Zoom to India
+        function zoomIndia() {
+            viewer.camera.flyTo({
+                destination : Cesium.Cartesian3.fromDegrees(78.9629, 22.5937, 6000000.0),
+                orientation : { pitch : Cesium.Math.toRadians(-45.0) }
+            });
+        }
+
+        // Initialize view
+        setTimeout(() => {
+            zoomIndia();
+            document.getElementById('status').innerText = "System Ready";
+        }, 2000);
+    </script>
 </body>
 </html>
