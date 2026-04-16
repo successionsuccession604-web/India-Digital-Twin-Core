@@ -25,3 +25,9 @@
   </script>
 </body>
 </html>
+// Live Weather Layer from Bhuvan
+viewer.imageryLayers.addImageryProvider(new Cesium.WebMapServiceImageryProvider({
+    url : 'https://nrsc.gov.in',
+    layers : 'islro_aws_raster', // Live Automatic Weather Station data
+    parameters : { transparent : 'true', format : 'image/png' }
+}));
